@@ -15,6 +15,7 @@ const uploadFileToFtp = async (config, csvFile, fileName) => {
             host: config.host,
             user: config.user,
             password: config.password,
+            port: config.port,
             secure: config.secure || false,
             passv: true            
         });
@@ -31,9 +32,11 @@ const uploadFileToFtp = async (config, csvFile, fileName) => {
         }
 
         // Upload the CSV file
-        const filePath = path.resolve(csvFile);
-        console.log(`Uploading file: ${filePath} as ${fileName}`);
-        await client.uploadFrom(filePath, fileName);
+        // const filePath = path.resolve(csvFile);
+        // console.log(`Uploading file: ${filePath} as ${fileName}`);
+        // await client.uploadFrom(filePath, fileName);
+        // await client.uploadFrom(csvFile, `${config.remoteFolder}/${fileName}`)
+        await client.uploadFrom(csvFile, fileName)
         console.log(`File uploaded successfully as ${fileName}`);
 
     } catch (error) {

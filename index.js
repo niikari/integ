@@ -2,6 +2,7 @@ const dbProcess = require("./dbProcess");
 const fileProcess = require("./fileProcess");
 const ftpProcess = require("./ftpProcess");
 const dotenv = require("dotenv");
+const { Readable } = require('stream');
 
 dotenv.config();
 
@@ -53,12 +54,16 @@ const ftpConfig = {
     remoteFolder: ftp_folder
 }
 
+const createInMemoryCsvFile = (csvString) => {
+    return Readable.from(csvString)
+}
+
 getStockObjects()
     .then(stockObjects => fileProcess.createCSVFileFromListOfStockObjects(stockObjects))
     .then(csvFile => {
         const fileName = fileProcess.setFileName()
         fileProcess.saveCSVFileToTemp(csvFile, fileName)
-        ftpProcess.uploadFileToFtp(ftpConfig)
+        ftpProcess.uploadFileToFtp(ftpConfig, createInMemoryCsvFile(csvFile), fileName)
     })
     .catch(error => {
         console.error("Failed to fetch stock objects:", error);
